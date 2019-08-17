@@ -1,0 +1,152 @@
+<!DOCTYPE html><html><!-- Test example --><head><title>Hello</title><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/><link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"/></head><body><div style="color:black" class="container"><div class="row justify-content-center"><div class="col-md-8"><hr/><h1 class="text-center">PyComponents</h1><hr/><h2>Example</h2><br/><div><p><button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapse-xmcrojztji" aria-expanded="false" aria-controls="collapseExample">Code</button></p><div class="collapse" id="collapse-xmcrojztji"><div class="card card-body"><pre><code>import os
+import random
+import string
+import webbrowser
+
+from pycomponents import TextComponent
+from pycomponents.html import (
+    B, Body, BR, Button, Code, Div, EscapeCharacter, File, H1, H2, Head, HR, Html, HtmlComment, Jinja2, Meta, P, Pre,
+    Progress, Style, Table, TD, Title, TR,
+)
+
+
+class Spoiler(TextComponent):
+    def __init__(self, *args, **kwargs):
+        self.text = kwargs.pop(&#39;text&#39;, &#39;Spoiler&#39;)
+        self.rand_id = self._generate_random_id()
+        super().__init__(*args, **kwargs)
+
+    @staticmethod
+    def _generate_random_id():
+        letters = string.ascii_lowercase
+        random_str = &#39;&#39;.join(random.choice(letters) for i in range(10))
+        return f&#39;collapse-{random_str}&#39;
+
+    def render(self):
+        return Div(**self.kwargs, child=[
+            P(
+                Button(
+                    self.text,
+                    class_=&#39;btn btn-primary&#39;,
+                    type_=&#39;button&#39;,
+                    data_toggle=&#39;collapse&#39;,
+                    data_target=f&#39;#{self.rand_id}&#39;,
+                    aria_expanded=&#39;false&#39;,
+                    aria_controls=&#39;collapseExample&#39;,
+                ),
+            ),
+            Div(class_=&#39;collapse&#39;, id=self.rand_id, child=[
+                Div(class_=&#39;card card-body&#39;, child=self.render_component(self.child)),
+            ]),
+        ])
+
+
+class TodoList(TextComponent):
+    todos = [
+        {&#39;text&#39;: &#39;Create library&#39;, &#39;done&#39;: True},
+        {&#39;text&#39;: &#39;Publish on GitHub  &#39;, &#39;done&#39;: False},
+        {&#39;text&#39;: &#39;Publish my package on PyPI  &#39;, &#39;done&#39;: False},
+    ]
+
+    def render(self):
+        todos = []
+        completed_count = 0
+
+        for todo in self.todos:
+            if todo[&#39;done&#39;]:
+                completed_count += 1
+
+            todos.append([
+                Div(class_=&#39;card&#39;, child=[
+                    Div(todo[&#39;text&#39;], class_=&#39;card-body&#39;),
+                ]),
+                BR(),
+            ])
+
+        return Div([
+            B(&#39;Tasks:&#39;),
+            Div(todos),
+            BR(),
+            BR(),
+            B(&#39;Progress:&#39;),
+            Progress(style={&#39;width&#39;: &#39;100%&#39;}, max=len(todos), value=completed_count),
+        ])
+
+
+class HtmlPage(TextComponent):
+    def render(self):
+        return Html([
+            HtmlComment(&#39;Test example&#39;),
+            Head([
+                Title(&#39;Hello&#39;),
+                Meta(charset=&#39;utf-8&#39;),
+                Meta(name=&#39;viewport&#39;, content=&#39;width=device-width, initial-scale=1, shrink-to-fit=no&#39;),
+                Style(href=&#39;https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css&#39;),
+            ]),
+            Body([
+                Div(style={&#39;color&#39;: &#39;black&#39;}, class_=&#39;container&#39;, child=[
+                    Div(class_=[&#39;row&#39;, &#39;justify-content-center&#39;], child=[
+                        Div(class_=&#39;col-md-8&#39;, child=[
+                            HR(),
+                            H1(&#39;PyComponents&#39;, class_=&#39;text-center&#39;),
+                            HR(),
+                            H2(&#39;Example&#39;),
+                            BR(),
+                            Spoiler(Pre(Code(EscapeCharacter(File(&#39;./main.py&#39;)))), text=&#39;Code&#39;),
+                            HR(),
+                            H2(&#39;Some table&#39;),
+                            BR(),
+                            Table(class_=&#39;table&#39;, child=[
+                                TR([
+                                    TD(&#39;Test 1&#39;),
+                                    TD(&#39;Test 2&#39;),
+                                    TD(&#39;Test 3&#39;),
+                                ]),
+                                TR([
+                                    TD(&#39;Test 4&#39;),
+                                    TD(&#39;Test 5&#39;),
+                                    TD(&#39;Test 6&#39;),
+                                ]),
+                            ]),
+                            HR(),
+                            H2(&#39;Jinja2&#39;),
+                            BR(),
+                            Jinja2(
+                                &#39;&lt;b&gt;Name:&lt;/b&gt; {{ user_name }}&lt;br/&gt;&lt;b&gt;Site:&lt;/b&gt; {{ site }}&#39;,
+                                user_name=&#39;Michael&#39;,
+                                site=&#39;https://sulyak.info&#39;
+                            ),
+                            HR(),
+                            H2(&#39;TODO&#39;),
+                            BR(),
+                            TodoList(),
+                        ]),
+                    ]),
+                ]),
+                &quot;&quot;&quot;
+                &lt;script src=&quot;https://code.jquery.com/jquery-3.3.1.slim.min.js&quot;&gt;&lt;/script&gt;
+                &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js&quot;&gt;&lt;/script&gt;
+                &lt;script src=&quot;https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js&quot;&gt;&lt;/script&gt;
+                &quot;&quot;&quot;,
+            ])
+        ])
+
+
+def main():
+    component = HtmlPage()
+    component.init({})
+    data = component.get()
+
+    with open(&#39;./index.html&#39;, &#39;w&#39;) as file:
+        file.write(data)
+
+    webbrowser.open_new_tab(f&#39;{os.getcwd()}/index.html&#39;)
+
+
+if __name__ == &#39;__main__&#39;:
+    main()
+</code></pre></div></div></div><hr/><h2>Some table</h2><br/><table class="table"><tr><td>Test 1</td><td>Test 2</td><td>Test 3</td></tr><tr><td>Test 4</td><td>Test 5</td><td>Test 6</td></tr></table><hr/><h2>Jinja2</h2><br/><b>Name:</b> Michael<br/><b>Site:</b> https://sulyak.info<hr/><h2>TODO</h2><br/><div><b>Tasks:</b><div><div class="card"><div class="card-body">Create library</div></div><br/><div class="card"><div class="card-body">Publish on GitHub  </div></div><br/><div class="card"><div class="card-body">Publish my package on PyPI  </div></div><br/></div><br/><br/><b>Progress:</b><progress style="width:100%" max="3" value="1"></progress></div></div></div></div>
+                <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+                <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+                </body></html>
