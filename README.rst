@@ -1,15 +1,6 @@
 ============
-PyComponents
+pycomponents
 ============
-
-
-.. image:: https://img.shields.io/pypi/v/pycomponents.svg
-        :target: https://pypi.python.org/pypi/pycomponents
-
-.. image:: https://pyup.io/repos/github/expert-m/pycomponents/shield.svg
-     :target: https://pyup.io/repos/github/expert-m/pycomponents/
-     :alt: Updates
-
 
 
 Install
@@ -17,7 +8,7 @@ Install
 
 From pip, run::
 
-    $ pip3 install --upgrade django-print-sql
+    $ pip3 install -U git+https://github.com/expert-m/pycomponents.git
 
 
 Usage
@@ -178,7 +169,4 @@ Example::
 Links
 -----
 
-Project Page
-  https://github.com/rabbit-aaron/django-print-sql
-
-PyComponents is licensed under the MIT license.
+pycomponents is licensed under the MIT license.
